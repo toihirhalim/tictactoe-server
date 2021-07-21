@@ -16,12 +16,13 @@
     "tictactoe"
   ],
   "author": "Toihir Halim",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/toihirhalim/tictactoe-server/issues"
   },
   "homepage": "https://github.com/toihirhalim/tictactoe-server#readme",
   "dependencies": {
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "socket.io": "^4.1.3"
   },
