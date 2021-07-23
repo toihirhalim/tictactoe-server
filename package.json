@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -15,12 +16,17 @@
     "tictactoe"
   ],
   "author": "Toihir Halim",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/toihirhalim/tictactoe-server/issues"
   },
   "homepage": "https://github.com/toihirhalim/tictactoe-server#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "socket.io": "^4.1.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
   }
 }

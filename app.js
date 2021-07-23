@@ -1,14 +1,11 @@
 const express = require("express")
+require('dotenv').config();
 const app = express()
 
-// use the express-static middleware
-app.use(express.static("public"))
-
-// define the first route
 app.get("/", function (req, res) {
-    res.send("<h1>TicTacToe!</h1>")
+    res.redirect(process.env.FRONTEND_URL || "https://toihirhalim.github.io/tictactoe-react-redux")
 })
 
-// start the server listening for requests
 app.listen(process.env.PORT || 3000,
     () => console.log("Server is running..."));
+
