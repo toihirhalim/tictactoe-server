@@ -1,0 +1,30 @@
+require('dotenv').config();
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true
+});
+
+const createAndSavePlayer = (player, done) => {
+    player.save((err, data) => {
+        if (err) {
+            err.msg = 'Internal server error'
+            err.status = 500
+
+            if (err.name === 'MongoError' && err.code === 11000) {
+                err.msg = Object.keys(err.keyValue)[0] + " already exists."
+                err.status = 409
+            }
+            else
+                console.log(err)
+
+            done({ msg: err.msg, status: err.status })
+        }
+
+        done(null, data);
+    });
+}
+
+exports.createAndSavePlayer = createAndSavePlayer;
