@@ -1,4 +1,5 @@
 require('dotenv').config();
+const Player = require('./model/Player')
 const mongoose = require('mongoose');
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -27,4 +28,33 @@ const createAndSavePlayer = (player, done) => {
     });
 }
 
+const findPlayerByUsername = (username, done) => {
+    Player.findOne({ username: username }, (err, data) => {
+        if (err) {
+            console.log(err)
+            done({ msg: 'Internal Error', status: 500 })
+        }
+
+        done(null, data);
+    });
+}
+
+const findPlayerByUsernameOrEmail = (username, done) => {
+    Player.findOne({
+        $or: [
+            { username: username },
+            { email: username }
+        ]
+    }, (err, data) => {
+        if (err) {
+            console.log(err)
+            done({ msg: 'Internal Error', status: 500 })
+        }
+
+        done(null, data);
+    });
+}
+
 exports.createAndSavePlayer = createAndSavePlayer;
+exports.findPlayerByUsername = findPlayerByUsername;
+exports.findPlayerByUsernameOrEmail = findPlayerByUsernameOrEmail;
