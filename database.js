@@ -22,9 +22,8 @@ const createAndSavePlayer = (player, done) => {
                 console.log(err)
 
             done({ msg: err.msg, status: err.status })
-        }
-
-        done(null, data);
+        } else
+            done(null, data);
     });
 }
 
@@ -33,9 +32,8 @@ const findPlayerByUsername = (username, done) => {
         if (err) {
             console.log(err)
             done({ msg: 'Internal Error', status: 500 })
-        }
-
-        done(null, data);
+        } else
+            done(null, data);
     });
 }
 
@@ -49,9 +47,8 @@ const findPlayerByUsernameOrEmail = (username, done) => {
         if (err) {
             console.log(err)
             done({ msg: 'Internal Error', status: 500 })
-        }
-
-        done(null, data);
+        } else
+            done(null, data);
     });
 }
 

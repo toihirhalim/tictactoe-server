@@ -44,7 +44,7 @@ app.post('/register', registerValidator(), (req, res) => {
         createAndSavePlayer(player, (err, data) => {
             if (err) return res.status(err.status).json({ msg: err.msg })
 
-            res.json({ username: data.uername })
+            res.json({ username: data.username })
         })
     });
 })
