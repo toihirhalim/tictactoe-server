@@ -11,7 +11,7 @@ const io = require('socket.io')(server, {
             process.env.FRONTEND_URL
         ]
     }
-});
+})
 app.use(express.json())
 
 app.use(cors({
@@ -19,6 +19,7 @@ app.use(cors({
 }))
 
 auth(app)
+
 app.get("/", (req, res) => {
     res.redirect(process.env.FRONTEND_URL || "https://toihirhalim.github.io/tictactoe-react-redux")
 })
