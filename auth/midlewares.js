@@ -9,9 +9,11 @@ const { resultsValidator } = require('./validators')
 const Player = require('../model/Player')
 const RefreshToken = require('../model/RefreshToken')
 
-
 const secretToken = process.env.ACCESS_TOKEN_SECRET || 'secret_code_for_token'
 const secretRefreshToken = process.env.REFRESH_TOKEN_SECRET || 'secret_code_for_refresh_token'
+
+const accesTokenExpiration = process.env.ACCES_TOKEN_EXPIRE_IN || '15m'
+const refreshTokenExpiration = (process.env.REFRESH_TOKEN_EXPIRE_IN || '30') + 'd'
 
 const authenticate = (req, res, next) => {
     const authHeader = req.headers['authorization']
@@ -76,7 +78,7 @@ const loginPlayer = (req, res, next) => {
 
 const generateAccesToken = (req, res, next) => {
     const tokenData = req.tokenData
-    jwt.sign(tokenData, secretToken, { expiresIn: '15m' }, (err, token) => {
+    jwt.sign(tokenData, secretToken, { expiresIn: accesTokenExpiration }, (err, token) => {
         if (err) return res.sendStatus(500)
 
         req.jwtToken = token
@@ -86,7 +88,7 @@ const generateAccesToken = (req, res, next) => {
 
 const generateRefreshToken = (req, res, next) => {
     const tokenData = req.tokenData
-    jwt.sign(tokenData, secretRefreshToken, (err, token) => {
+    jwt.sign(tokenData, secretRefreshToken, { expiresIn: refreshTokenExpiration }, (err, token) => {
         if (err) return res.sendStatus(500)
 
         req.jwtRefreshToken = token
@@ -102,7 +104,7 @@ const saveRefreshToken = (req, res, next) => {
     })
 
     createAndSaveRefreshToken(refreshToken, (err, data) => {
-        if (err) res.sendStatus(500)
+        if (err) return res.sendStatus(500)
 
         next()
     })
@@ -116,7 +118,7 @@ const verifyRefreshToken = (req, res, next) => {
     findRefreshTokenByToken(refreshToken, (err, data) => {
         if (err) return res.sendStatus(500)
 
-        if (!data) return res.status(403)
+        if (!data) return res.sendStatus(403)
 
         jwt.verify(refreshToken, secretRefreshToken, (err, player) => {
             if (err) return res.sendStatus(403)

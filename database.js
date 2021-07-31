@@ -1,4 +1,3 @@
-require('dotenv').config();
 const Player = require('./model/Player')
 const RefreshToken = require('./model/RefreshToken')
 const mongoose = require('mongoose');

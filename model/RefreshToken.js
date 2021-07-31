@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+const refreshTokenExpiration = process.env.REFRESH_TOKEN_EXPIRE_IN || 30
+
 const RefreshTokenSchema = new Schema({
     playerId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -12,7 +14,8 @@ const RefreshTokenSchema = new Schema({
     },
     createdAt: {
         type: Date,
-        default: Date.now()
+        default: Date.now(),
+        expires: refreshTokenExpiration * 24 * 60 * 60
     }
 });
 
