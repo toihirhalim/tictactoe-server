@@ -6,18 +6,21 @@ const {
     loginPlayer,
     generateAccesToken,
     generateRefreshToken,
-    verifyRefreshToken
+    verifyRefreshToken,
+    saveRefreshToken
 } = require('./midlewares')
 
 module.exports = (app) => {
 
-    app.post('/register', registerValidator(), verifyErrors, registerPlayer, generateAccesToken, generateRefreshToken, (req, res) => {
-        res.json({ token: req.jwtToken, refreshToken: req.jwtRefreshToken })
-    })
+    app.post('/register', registerValidator(), verifyErrors, registerPlayer,
+        generateAccesToken, generateRefreshToken, saveRefreshToken, (req, res) => {
+            res.json({ token: req.jwtToken, refreshToken: req.jwtRefreshToken })
+        })
 
-    app.post('/login', loginValidator(), verifyErrors, loginPlayer, generateAccesToken, generateRefreshToken, (req, res) => {
-        res.json({ token: req.jwtToken, refreshToken: req.jwtRefreshToken })
-    })
+    app.post('/login', loginValidator(), verifyErrors, loginPlayer,
+        generateAccesToken, generateRefreshToken, saveRefreshToken, (req, res) => {
+            res.json({ token: req.jwtToken, refreshToken: req.jwtRefreshToken })
+        })
 
     app.post('/token', verifyRefreshToken, generateAccesToken, (req, res) => {
         res.json({ newToken: req.jwtToken })

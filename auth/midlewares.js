@@ -1,9 +1,14 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
-const createAndSavePlayer = require('../database').createAndSavePlayer;
-const findPlayerByUsernameOrEmail = require('../database').findPlayerByUsernameOrEmail;
+const { createAndSavePlayer,
+    findPlayerByUsernameOrEmail,
+    createAndSaveRefreshToken,
+    findRefreshTokenByToken
+} = require('../database')
 const { resultsValidator } = require('./validators')
 const Player = require('../model/Player')
+const RefreshToken = require('../model/RefreshToken')
+
 
 const secretToken = process.env.ACCESS_TOKEN_SECRET || 'secret_code_for_token'
 const secretRefreshToken = process.env.REFRESH_TOKEN_SECRET || 'secret_code_for_refresh_token'
@@ -85,6 +90,20 @@ const generateRefreshToken = (req, res, next) => {
         if (err) return res.sendStatus(500)
 
         req.jwtRefreshToken = token
+
+        next()
+    })
+}
+
+const saveRefreshToken = (req, res, next) => {
+    const refreshToken = new RefreshToken({
+        value: req.jwtRefreshToken,
+        playerId: req.tokenData.id
+    })
+
+    createAndSaveRefreshToken(refreshToken, (err, data) => {
+        if (err) res.sendStatus(500)
+
         next()
     })
 }
@@ -94,14 +113,19 @@ const verifyRefreshToken = (req, res, next) => {
 
     if (!refreshToken) return res.sendStatus(401)
 
-    //TODO: if refresh token doesn't exist in database return res.sendStatus(403)
+    findRefreshTokenByToken(refreshToken, (err, data) => {
+        if (err) return res.sendStatus(500)
 
-    jwt.verify(refreshToken, secretRefreshToken, (err, player) => {
-        if (err) return res.sendStatus(403)
+        if (!data) return res.status(403)
 
-        req.tokenData = { id: player.id, username: player.username }
-        next()
-    });
+        jwt.verify(refreshToken, secretRefreshToken, (err, player) => {
+            if (err) return res.sendStatus(403)
+
+            req.tokenData = { id: player.id, username: player.username }
+            next()
+        });
+    })
+
 }
 
 module.exports = {
@@ -111,5 +135,6 @@ module.exports = {
     loginPlayer,
     generateAccesToken,
     generateRefreshToken,
+    saveRefreshToken,
     verifyRefreshToken
 }

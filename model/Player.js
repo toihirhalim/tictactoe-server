@@ -36,4 +36,4 @@ const UserSchema = new Schema({
     }
 });
 
-module.exports = mongoose.model("player", UserSchema);
+module.exports = mongoose.model("Player", UserSchema);

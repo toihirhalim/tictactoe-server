@@ -1,11 +1,15 @@
 require('dotenv').config();
 const Player = require('./model/Player')
+const RefreshToken = require('./model/RefreshToken')
 const mongoose = require('mongoose');
 
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true
+}, (err) => {
+    if (err) throw err;
+    console.log('connected to database')
 });
 
 const createAndSavePlayer = (player, done) => {
@@ -52,6 +56,35 @@ const findPlayerByUsernameOrEmail = (username, done) => {
     });
 }
 
-exports.createAndSavePlayer = createAndSavePlayer;
-exports.findPlayerByUsername = findPlayerByUsername;
-exports.findPlayerByUsernameOrEmail = findPlayerByUsernameOrEmail;
+const createAndSaveRefreshToken = (refreshToken, done) => {
+    refreshToken.save((err, data) => {
+        if (err) console.log(err)
+
+        done(err, data);
+    });
+}
+
+const findRefreshTokenByToken = (token, done) => {
+    RefreshToken.findOne({ value: token }, (err, data) => {
+        if (err) console.log(err)
+
+        done(err, data);
+    });
+}
+
+const findRefreshTokenByplayerId = (playerId, done) => {
+    RefreshToken.findOne({ playerId: playerId }, (err, data) => {
+        if (err) console.log(err)
+
+        done(err, data);
+    });
+}
+
+module.exports = {
+    createAndSavePlayer,
+    findPlayerByUsername,
+    findPlayerByUsernameOrEmail,
+    createAndSaveRefreshToken,
+    findRefreshTokenByToken,
+    findRefreshTokenByplayerId
+}
