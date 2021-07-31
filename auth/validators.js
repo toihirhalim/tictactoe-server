@@ -12,11 +12,6 @@ module.exports = {
                 .not()
                 .custom((val) => /[^A-za-z0-9]/g.test(val))
                 .withMessage('Username can not use symbols'),
-            /*check('email')
-                .notEmpty()
-                .withMessage('Email is required')
-                .isEmail()
-                .withMessage('Please enter a valid email'),*/
             oneOf([
                 check('email').isEmail().withMessage('Please enter a valid email'),
                 check('email').isEmpty().withMessage('Please enter a valid email again')
