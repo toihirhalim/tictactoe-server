@@ -44,7 +44,7 @@ const registerPlayer = (req, res, next) => {
         createAndSavePlayer(player, (err, data) => {
             if (err) return res.status(err.status).json({ msg: err.msg })
 
-            req.username = data.username
+            req.tokenData = { id: data.id, username: data.username }
 
             next()
         })
@@ -62,7 +62,7 @@ const loginPlayer = (req, res, next) => {
 
             if (!result) return res.status(401).json({ msg: 'Pasword incorrect' })
 
-            req.username = data.username
+            req.tokenData = { id: data.id, username: data.username }
 
             next()
         });
@@ -70,7 +70,7 @@ const loginPlayer = (req, res, next) => {
 }
 
 const generateAccesToken = (req, res, next) => {
-    const tokenData = { username: req.username }
+    const tokenData = req.tokenData
     jwt.sign(tokenData, secretToken, { expiresIn: '15m' }, (err, token) => {
         if (err) return res.sendStatus(500)
 
@@ -80,7 +80,7 @@ const generateAccesToken = (req, res, next) => {
 }
 
 const generateRefreshToken = (req, res, next) => {
-    const tokenData = { username: req.username }
+    const tokenData = req.tokenData
     jwt.sign(tokenData, secretRefreshToken, (err, token) => {
         if (err) return res.sendStatus(500)
 
@@ -99,7 +99,7 @@ const verifyRefreshToken = (req, res, next) => {
     jwt.verify(refreshToken, secretRefreshToken, (err, player) => {
         if (err) return res.sendStatus(403)
 
-        req.username = player.username
+        req.tokenData = { id: player.id, username: player.username }
         next()
     });
 }
