@@ -1,4 +1,4 @@
-const { validationResult, check } = require('express-validator')
+const { validationResult, check, oneOf } = require('express-validator')
 
 module.exports = {
     resultsValidator: (req) => {
@@ -10,13 +10,17 @@ module.exports = {
                 .notEmpty()
                 .withMessage('username is required')
                 .not()
-                .custom((val) => /[^A-za-z0-9\s]/g.test(val))
+                .custom((val) => /[^A-za-z0-9]/g.test(val))
                 .withMessage('Username can not use symbols'),
-            check('email')
+            /*check('email')
                 .notEmpty()
                 .withMessage('Email is required')
                 .isEmail()
-                .withMessage('Please enter a valid email'),
+                .withMessage('Please enter a valid email'),*/
+            oneOf([
+                check('email').isEmail().withMessage('Please enter a valid email'),
+                check('email').isEmpty().withMessage('Please enter a valid email again')
+            ]),
             check('password')
                 .notEmpty()
                 .withMessage('password is required')
