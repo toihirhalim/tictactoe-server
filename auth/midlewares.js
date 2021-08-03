@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt')
 const { createAndSavePlayer,
     findPlayerByUsernameOrEmail,
     createAndSaveRefreshToken,
-    findRefreshTokenByToken
+    findRefreshTokenByToken,
+    deleteRefreshToken
 } = require('../database')
 const { resultsValidator } = require('./validators')
 const Player = require('../model/Player')
@@ -130,6 +131,15 @@ const verifyRefreshToken = (req, res, next) => {
 
 }
 
+const logoutPlayer = (req, res, next) => {
+    refreshToken = req.body.refreshToken
+    deleteRefreshToken(refreshToken, (err, data) => {
+        if (err) return res.sendStatus(500)
+
+        next()
+    })
+}
+
 module.exports = {
     authenticate,
     verifyErrors,
@@ -138,5 +148,6 @@ module.exports = {
     generateAccesToken,
     generateRefreshToken,
     saveRefreshToken,
-    verifyRefreshToken
+    verifyRefreshToken,
+    logoutPlayer
 }

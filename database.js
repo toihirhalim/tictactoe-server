@@ -79,11 +79,19 @@ const findRefreshTokenByplayerId = (playerId, done) => {
     });
 }
 
+const deleteRefreshToken = (refreshToken, done) => {
+
+    RefreshToken.deleteOne({ value: refreshToken }, (err, data) => {
+        done(err, data)
+    })
+}
+
 module.exports = {
     createAndSavePlayer,
     findPlayerByUsername,
     findPlayerByUsernameOrEmail,
     createAndSaveRefreshToken,
     findRefreshTokenByToken,
-    findRefreshTokenByplayerId
+    findRefreshTokenByplayerId,
+    deleteRefreshToken
 }

@@ -1,4 +1,4 @@
-const { registerValidator, loginValidator } = require('./validators')
+const { registerValidator, loginValidator, logoutValidator } = require('./validators')
 const {
     authenticate,
     verifyErrors,
@@ -7,7 +7,8 @@ const {
     generateAccesToken,
     generateRefreshToken,
     verifyRefreshToken,
-    saveRefreshToken
+    saveRefreshToken,
+    logoutPlayer
 } = require('./midlewares')
 
 module.exports = (app) => {
@@ -21,6 +22,10 @@ module.exports = (app) => {
         generateAccesToken, generateRefreshToken, saveRefreshToken, (req, res) => {
             res.json({ token: req.jwtToken, refreshToken: req.jwtRefreshToken })
         })
+
+    app.post('/logout', logoutValidator(), verifyErrors, logoutPlayer, (req, res) => {
+        res.status(200).json({ msg: 'loged out succesfly' })
+    })
 
     app.post('/token', verifyRefreshToken, generateAccesToken, (req, res) => {
         res.json({ newToken: req.jwtToken })
