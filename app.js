@@ -4,6 +4,7 @@ const express = require('express')
 const app = express();
 const auth = require('./auth')
 const server = require('http').createServer(app)
+const cookieParser = require('cookie-parser')
 const io = require('socket.io')(server, {
     cors: {
         origin: [
@@ -15,8 +16,11 @@ const io = require('socket.io')(server, {
 app.use(express.json())
 
 app.use(cors({
-    origin: ['https://toihirhalim.github.io/tictactoe-react-redux', process.env.FRONTEND_URL]
+    origin: ['https://toihirhalim.github.io/tictactoe-react-redux', process.env.FRONTEND_URL],
+    credentials: true
 }))
+
+app.use(cookieParser(process.env.SECRET_COOCKIE_CODE || 'My secret coockie code'));
 
 auth(app)
 

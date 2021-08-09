@@ -28,10 +28,5 @@ module.exports = {
             check('username').notEmpty().withMessage('username or email is required'),
             check('password').notEmpty().withMessage('password is required')
         ]
-    },
-    logoutValidator: () => {
-        return [
-            check('refreshToken').notEmpty().withMessage('the refresh token is required'),
-        ]
     }
 }

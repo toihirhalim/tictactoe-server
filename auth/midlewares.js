@@ -112,7 +112,7 @@ const saveRefreshToken = (req, res, next) => {
 }
 
 const verifyRefreshToken = (req, res, next) => {
-    const refreshToken = req.body.refreshToken
+    const refreshToken = req.signedCookies.refreshToken
 
     if (!refreshToken) return res.sendStatus(401)
 
@@ -132,7 +132,8 @@ const verifyRefreshToken = (req, res, next) => {
 }
 
 const logoutPlayer = (req, res, next) => {
-    refreshToken = req.body.refreshToken
+    refreshToken = req.signedCookies.refreshToken
+
     deleteRefreshToken(refreshToken, (err, data) => {
         if (err) return res.sendStatus(500)
 

@@ -10,24 +10,37 @@ const {
     saveRefreshToken,
     logoutPlayer
 } = require('./midlewares')
+const refreshTokenMaxAge = (process.env.REFRESH_TOKEN_EXPIRE_IN || 30) * 24 * 60 * 60 * 1000
 
 module.exports = (app) => {
-
     app.post('/register', registerValidator(), verifyErrors, registerPlayer,
         generateAccesToken, generateRefreshToken, saveRefreshToken, (req, res) => {
-            res.json({ token: req.jwtToken, refreshToken: req.jwtRefreshToken })
+            res.cookie('refreshToken', req.jwtRefreshToken, {
+                maxAge: refreshTokenMaxAge,
+                httpOnly: true,
+                signed: true,
+                sameSite: true
+            })
+            res.json({ token: req.jwtToken })
         })
 
     app.post('/login', loginValidator(), verifyErrors, loginPlayer,
         generateAccesToken, generateRefreshToken, saveRefreshToken, (req, res) => {
-            res.json({ token: req.jwtToken, refreshToken: req.jwtRefreshToken })
+            res.cookie('refreshToken', req.jwtRefreshToken, {
+                maxAge: refreshTokenMaxAge,
+                httpOnly: true,
+                signed: true,
+                sameSite: true
+            })
+            res.json({ token: req.jwtToken })
         })
 
-    app.post('/logout', logoutValidator(), verifyErrors, logoutPlayer, (req, res) => {
+    app.get('/logout', logoutPlayer, (req, res) => {
+        res.clearCookie('refreshToken');
         res.status(200).json({ msg: 'loged out succesfly' })
     })
 
-    app.post('/token', verifyRefreshToken, generateAccesToken, (req, res) => {
+    app.get('/token', verifyRefreshToken, generateAccesToken, (req, res) => {
         res.json({ newToken: req.jwtToken })
     })
 
