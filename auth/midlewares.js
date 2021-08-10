@@ -4,7 +4,8 @@ const { createAndSavePlayer,
     findPlayerByUsernameOrEmail,
     createAndSaveRefreshToken,
     findRefreshTokenByToken,
-    deleteRefreshToken
+    deleteRefreshToken,
+    findPlayerByUsername
 } = require('../database')
 const { resultsValidator } = require('./validators')
 const Player = require('../model/Player')
@@ -25,7 +26,7 @@ const authenticate = (req, res, next) => {
     jwt.verify(token, secretToken, (err, player) => {
         if (err) return res.sendStatus(403)
 
-        req.player = player
+        req.player = { id: player.id, username: player.username }
 
         next()
     })
@@ -52,7 +53,7 @@ const registerPlayer = (req, res, next) => {
         createAndSavePlayer(player, (err, data) => {
             if (err) return res.status(err.status).json({ msg: err.msg })
 
-            req.tokenData = { id: data.id, username: data.username }
+            req.player = { id: data.id, username: data.username }
 
             next()
         })
@@ -69,8 +70,7 @@ const loginPlayer = (req, res, next) => {
             if (err) return res.sendStatus(500)
 
             if (!result) return res.status(401).json({ msg: 'Pasword incorrect' })
-
-            req.tokenData = { id: data.id, username: data.username }
+            req.player = { id: data.id, username: data.username }
 
             next()
         });
@@ -78,21 +78,22 @@ const loginPlayer = (req, res, next) => {
 }
 
 const generateAccesToken = (req, res, next) => {
-    const tokenData = req.tokenData
+    const tokenData = req.player
     jwt.sign(tokenData, secretToken, { expiresIn: accesTokenExpiration }, (err, token) => {
         if (err) return res.sendStatus(500)
 
-        req.jwtToken = token
+        req.token = token
+
         next()
     })
 }
 
 const generateRefreshToken = (req, res, next) => {
-    const tokenData = req.tokenData
+    const tokenData = req.player
     jwt.sign(tokenData, secretRefreshToken, { expiresIn: refreshTokenExpiration }, (err, token) => {
         if (err) return res.sendStatus(500)
 
-        req.jwtRefreshToken = token
+        req.refreshToken = token
 
         next()
     })
@@ -100,8 +101,8 @@ const generateRefreshToken = (req, res, next) => {
 
 const saveRefreshToken = (req, res, next) => {
     const refreshToken = new RefreshToken({
-        value: req.jwtRefreshToken,
-        playerId: req.tokenData.id
+        value: req.refreshToken,
+        playerId: req.player.id
     })
 
     createAndSaveRefreshToken(refreshToken, (err, data) => {
@@ -124,7 +125,8 @@ const verifyRefreshToken = (req, res, next) => {
         jwt.verify(refreshToken, secretRefreshToken, (err, player) => {
             if (err) return res.sendStatus(403)
 
-            req.tokenData = { id: player.id, username: player.username }
+            req.player = { id: player.id, username: player.username }
+
             next()
         });
     })
@@ -141,6 +143,18 @@ const logoutPlayer = (req, res, next) => {
     })
 }
 
+const getPlayerByUsername = (req, res, next) => {
+    findPlayerByUsername(req.params.username, (err, data) => {
+        if (err) return res.sendStatus(500)
+
+        if (!data) return res.status(401).json({ msg: 'Username not found' })
+
+        req.player = data
+
+        next()
+    })
+}
+
 module.exports = {
     authenticate,
     verifyErrors,
@@ -150,5 +164,6 @@ module.exports = {
     generateRefreshToken,
     saveRefreshToken,
     verifyRefreshToken,
-    logoutPlayer
+    logoutPlayer,
+    getPlayerByUsername
 }

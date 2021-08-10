@@ -7,7 +7,10 @@ mongoose.connect(process.env.MONGO_URI, {
     useUnifiedTopology: true,
     useCreateIndex: true
 }, (err) => {
-    if (err) throw err;
+    if (err) {
+        console.log('Error connection to database')
+        throw err
+    }
     console.log('connected to database')
 });
 
@@ -32,11 +35,8 @@ const createAndSavePlayer = (player, done) => {
 
 const findPlayerByUsername = (username, done) => {
     Player.findOne({ username: username }, (err, data) => {
-        if (err) {
-            console.log(err)
-            done({ msg: 'Internal Error', status: 500 })
-        } else
-            done(null, data);
+        if (err) console.log(err)
+        done(err, data);
     });
 }
 
