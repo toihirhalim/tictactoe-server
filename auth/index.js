@@ -9,7 +9,8 @@ const {
     verifyRefreshToken,
     saveRefreshToken,
     logoutPlayer,
-    getPlayerByUsername
+    getPlayerInfosByUsername,
+    getPlayerPublicInfosByUsername
 } = require('./midlewares')
 const refreshTokenMaxAge = (process.env.REFRESH_TOKEN_EXPIRE_IN || 30) * 24 * 60 * 60 * 1000
 
@@ -49,18 +50,11 @@ module.exports = (app) => {
         res.json({ player: req.player })
     })
 
-    app.get('/player/:username', getPlayerByUsername, (req, res) => {
-        const player = req.player
-
-        res.json({
-            id: player.id,
-            username: player.username,
-            name: player.name,
-            statistics: player.statistics
-        })
+    app.get('/player/:username', getPlayerPublicInfosByUsername, (req, res) => {
+        res.json(req.player)
     })
 
-    app.get('/player-full-infos/:username', authenticate, getPlayerByUsername, (req, res) => {
+    app.get('/player-full-infos/:username', authenticate, getPlayerInfosByUsername, (req, res) => {
         res.json(req.player)
     })
 }

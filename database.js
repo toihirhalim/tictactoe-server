@@ -33,8 +33,15 @@ const createAndSavePlayer = (player, done) => {
     });
 }
 
-const findPlayerByUsername = (username, done) => {
-    Player.findOne({ username: username }, (err, data) => {
+const findPlayerPublicInfosByUsername = (username, done) => {
+    Player.findOne({ username: username }, { password: 0, email: 0 }, (err, data) => {
+        if (err) console.log(err)
+        done(err, data);
+    });
+}
+
+const findPlayerInfosByUsername = (username, done) => {
+    Player.findOne({ username: username }, { password: 0 }, (err, data) => {
         if (err) console.log(err)
         done(err, data);
     });
@@ -88,7 +95,8 @@ const deleteRefreshToken = (refreshToken, done) => {
 
 module.exports = {
     createAndSavePlayer,
-    findPlayerByUsername,
+    findPlayerPublicInfosByUsername,
+    findPlayerInfosByUsername,
     findPlayerByUsernameOrEmail,
     createAndSaveRefreshToken,
     findRefreshTokenByToken,
