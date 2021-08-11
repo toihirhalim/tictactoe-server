@@ -62,7 +62,7 @@ const registerPlayer = (req, res, next) => {
 
 const loginPlayer = (req, res, next) => {
     findPlayerByUsernameOrEmail(req.body.username, (err, data) => {
-        if (err) return res.status(400).json({ msg: errors })
+        if (err) return res.sendStatus(500)
 
         if (!data) return res.status(401).json({ msg: 'Username or Email not found' })
 

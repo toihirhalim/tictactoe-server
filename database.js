@@ -41,17 +41,10 @@ const findPlayerByUsername = (username, ignoreFields, done) => {
 }
 
 const findPlayerByUsernameOrEmail = (username, done) => {
-    Player.findOne({
-        $or: [
-            { username: username },
-            { email: username }
-        ]
-    }, (err, data) => {
-        if (err) {
-            console.log(err)
-            done({ msg: 'Internal Error', status: 500 })
-        } else
-            done(null, data);
+    Player.findOne({ $or: [{ username: username }, { email: username }] }, (err, data) => {
+        if (err) console.log(err)
+
+        done(err, data);
     });
 }
 
@@ -82,6 +75,7 @@ const findRefreshTokenByplayerId = (playerId, done) => {
 const deleteRefreshToken = (refreshToken, done) => {
 
     RefreshToken.deleteOne({ value: refreshToken }, (err, data) => {
+        if (err) console.log(err)
         done(err, data)
     })
 }
