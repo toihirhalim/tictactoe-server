@@ -157,10 +157,11 @@ const getPlayerPublicInfosByUsername = (req, res, next) => {
     })
 }
 
-const getPlayerInfosByUsername = (req, res, next) => {
+const getPlayerInfos = (req, res, next) => {
     const ignoreFields = { password: 0 }
+    const username = req.player.username
 
-    findPlayerByUsername(req.params.username, ignoreFields, (err, data) => {
+    findPlayerByUsername(username, ignoreFields, (err, data) => {
         if (err) return res.sendStatus(500)
 
         if (!data) return res.status(401).json({ msg: 'Username not found' })
@@ -181,6 +182,6 @@ module.exports = {
     saveRefreshToken,
     verifyRefreshToken,
     logoutPlayer,
-    getPlayerInfosByUsername,
+    getPlayerInfos,
     getPlayerPublicInfosByUsername
 }
