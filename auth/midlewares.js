@@ -5,8 +5,7 @@ const { createAndSavePlayer,
     createAndSaveRefreshToken,
     findRefreshTokenByToken,
     deleteRefreshToken,
-    findPlayerInfosByUsername,
-    findPlayerPublicInfosByUsername
+    findPlayerByUsername
 } = require('../database')
 const { resultsValidator } = require('./validators')
 const Player = require('../model/Player')
@@ -145,7 +144,9 @@ const logoutPlayer = (req, res, next) => {
 }
 
 const getPlayerPublicInfosByUsername = (req, res, next) => {
-    findPlayerPublicInfosByUsername(req.params.username, (err, data) => {
+    const ignoreFields = { email: 0, password: 0 }
+
+    findPlayerByUsername(req.params.username, ignoreFields, (err, data) => {
         if (err) return res.sendStatus(500)
 
         if (!data) return res.status(401).json({ msg: 'Username not found' })
@@ -157,7 +158,9 @@ const getPlayerPublicInfosByUsername = (req, res, next) => {
 }
 
 const getPlayerInfosByUsername = (req, res, next) => {
-    findPlayerInfosByUsername(req.params.username, (err, data) => {
+    const ignoreFields = { password: 0 }
+
+    findPlayerByUsername(req.params.username, ignoreFields, (err, data) => {
         if (err) return res.sendStatus(500)
 
         if (!data) return res.status(401).json({ msg: 'Username not found' })
