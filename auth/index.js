@@ -23,7 +23,10 @@ module.exports = (app) => {
                 signed: true,
                 sameSite: true
             })
-            res.json({ token: req.token })
+            res.json({
+                token: req.token,
+                player: req.player
+            })
         })
 
     app.post('/login', loginValidator(), verifyErrors, loginPlayer,
@@ -34,7 +37,10 @@ module.exports = (app) => {
                 signed: true,
                 sameSite: true
             })
-            res.json({ token: req.token })
+            res.json({
+                token: req.token,
+                player: req.player
+            })
         })
 
     app.get('/logout', logoutPlayer, (req, res) => {
@@ -56,5 +62,12 @@ module.exports = (app) => {
 
     app.get('/player', authenticate, getPlayerInfos, (req, res) => {
         res.json(req.player)
+    })
+
+    app.get('/isloggedin', verifyRefreshToken, generateAccesToken, (req, res) => {
+        res.json({
+            token: req.token,
+            player: req.player
+        })
     })
 }
