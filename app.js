@@ -3,6 +3,7 @@ var cors = require('cors')
 const express = require('express')
 const app = express();
 const auth = require('./auth')
+const socket = require('./sockets')
 const server = require('http').createServer(app)
 const cookieParser = require('cookie-parser')
 const io = require('socket.io')(server, {
@@ -13,6 +14,7 @@ const io = require('socket.io')(server, {
         ]
     }
 })
+
 app.use(express.json())
 
 app.use(cors({
@@ -24,20 +26,10 @@ app.use(cookieParser(process.env.SECRET_COOCKIE_CODE || 'My secret coockie code'
 
 auth(app)
 
+socket(io)
+
 app.get("/", (req, res) => {
     res.redirect(process.env.FRONTEND_URL || "https://toihirhalim.github.io/tictactoe-react-redux")
-})
-
-let online = 0
-
-io.on('connection', socket => {
-    console.log("connected " + socket.id)
-    console.log(++online + " online")
-
-    socket.on('disconnect', function () {
-        console.log(socket.id + ' disconnected')
-        console.log(--online + " online")
-    });
 })
 
 server.listen(process.env.PORT || 3000, () => {
