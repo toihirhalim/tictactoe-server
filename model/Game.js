@@ -1,6 +1,6 @@
 function Game(player1, player2) {
     this.player1 = { id: player1, value: 'x' }
-    this.player2 = { id: player1, value: 'o' }
+    this.player2 = { id: player2, value: 'o' }
     this.board = [
         ['', '', ''],
         ['', '', ''],
