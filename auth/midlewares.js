@@ -134,7 +134,9 @@ const verifyRefreshToken = (req, res, next) => {
 }
 
 const logoutPlayer = (req, res, next) => {
-    refreshToken = req.signedCookies.refreshToken
+    const refreshToken = req.signedCookies.refreshToken
+
+    if (!refreshToken) return res.sendStatus(400)
 
     deleteRefreshToken(refreshToken, (err, data) => {
         if (err) return res.sendStatus(500)

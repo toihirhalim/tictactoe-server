@@ -1,13 +1,15 @@
 let online = 0
+const games = {}
 
 module.exports = (io) => {
     io.on('connection', socket => {
-        console.log("connected " + socket.id)
-        console.log(++online + " online")
+        ++online
+        io.emit('online', online)
+        io.to(socket.id).emit('games', Object.keys(games).length)
 
-        socket.on('disconnect', function () {
-            console.log(socket.id + ' disconnected')
-            console.log(--online + " online")
+        socket.on('disconnect', () => {
+            online--
+            io.emit('online', online)
         });
     })
 }
