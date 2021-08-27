@@ -13,6 +13,14 @@ module.exports = (io) => {
         socket.on('play-request', playerId => {
             if (gameRequests.length === 0) {
                 gameRequests.push({ socketId: socket.id, playerId })
+                setTimeout(() => {
+                    const index = gameRequests.findIndex(req => req.socketId === socket.id)
+
+                    if (index >= 0) {
+                        gameRequests.splice(index, 1)
+                        io.to(socket.id).emit('request-rejected')
+                    }
+                }, 10000);
             }
             else {
                 const gameRequest = gameRequests.splice(0, 1)[0]
