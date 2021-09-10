@@ -22,6 +22,8 @@ function Game(player1, player2) {
         return true
     }
 
+    this.whoPlaying = () => this.player1Turn ? this.player1 : this.player2
+
     this.getStatus = () => {
         const board = this.board
         const pos = this.lastPosition
