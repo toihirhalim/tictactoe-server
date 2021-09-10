@@ -31,6 +31,21 @@ module.exports = (io) => {
             }
         })
 
+        socket.on('join-game', gameId => {
+            if (games[gameId]) {
+                socket.join(gameId)
+                io.to(socket.id).emi('board', games[gameId].board)
+            } else
+                io.to(socket.id).emi('game-no-found')
+        })
+
+        socket.on('get-board', gameId => {
+            if (games[gameId])
+                io.to(socket.id).emi('board', games[gameId].board)
+            else
+                io.to(socket.id).emi('game-no-found')
+        })
+
         socket.on('play-move', ({ gameId, playerId, x, y }) => {
             if (games[gameId] && !games[gameId].over && games[gameId].whoPlaying().id === playerId) {
                 games[gameId].play(x, y)
